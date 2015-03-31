@@ -53,10 +53,10 @@ unity.on('connection', function(socket) {
 
 client.on('connection', function(socket) {
 	//User logs in
-	socket.on('login', function(name, email) {
+	socket.on('login', function(data) {
 		users[socket] = {
-			'name': name,
-			'email': email
+			'name': data.name,
+			'email': data.email
 		};
 	});
 	//User logs out / disconnects

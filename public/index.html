@@ -2,11 +2,13 @@
 <html>
   <head>
     <title>Socket.IO chat</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
     <link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="js/engine.js"></script>
   </head>
   <body>
   	<div id="containter">
@@ -32,86 +34,5 @@
             </form>
         </div>
     </div>
-    <script>
-      var username = "";
-	  var email = "";
-	  var fieldCompleted = false;
-      var socket = io.connect('/client');
-	  $('#name').change(function(e) {
-    	 checkInputFields();   
-	  });
-	  $('#email').change(function(e) {
-      	  checkInputFields()
-	  });
-	  $('#login').submit(function() {
-		  if (!fieldCompleted)
-			  return false
-		  doLogin();
-		  return false;
-	  });
-	  $("#anonymous a").click(function(e) {
-        e.preventDefault();
-		doLogin(true);
-	  });
-      $('#chat').submit(function(){
-		var msg = $('#m').val();
-		if (msg != "chat" && msg != "") {
-		  socket.emit('chat', {
-		    name: username,
-		    message: $('#m').val()
-		  });
-		}
-        $('#m').val('');
-        return false;
-      });
-      socket.on('chat', function(data){
-        if (data.name == null) {
-          $('#messages').append($('<li>').html('<strong>' + data.message + '</strong>'));
-        }
-        else {
-            var nickname = "Anonymous";
-            if (data.name != "")
-              nickname = data.name;
-            $('#messages').append($('<li>').html('<span class="name">' + nickname + '</span>:&nbsp;' + data.message));
-        }
-      });
-	  //login function
-	  function doLogin(anonymous) {
-		  if (!anonymous) {
-		 	 username = $("#name").val();
-			 email = $("#email").val();
-		  }
-		  socket.emit('login', {
-			  name: username,
-			  email: email
-		  });
-		  $("#loginPanel").hide();
-		  $("#chatPanel").show();
-	  }
-	  //check input fields
-	  function checkInputFields() {
-		  if (
-		  	$("#name").val() == "" ||
-			$("#name").val() == "nickname" ||
-			$("#email").val() == "" ||
-			$("#email").val() == "e-mail address"
-		  ) {
-			  fieldCompleted = false;
-		  }
-		  else
-		  	fieldCompleted = true;
-		  setEnterEnabled();
-	  }
-	  
-	  //set enter button enabled
-	  function setEnterEnabled() {
-		  if (fieldCompleted) {
-			  $("#login input[type='submit']").removeClass("disabled");
-		  }
-		  else {
-			  $("#login input[type='submit']").addClass("disabled");
-		  }
-	  }
-    </script>
   </body>
 </html>
