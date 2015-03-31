@@ -21,7 +21,7 @@ input {
 
 #loginPanel {
 	margin: 50px auto;
-	width: 400px;
+	width: 320px;
 }
 
 #loginPanel h2 {
@@ -42,8 +42,8 @@ input {
 	background:url(../images/logo.png) no-repeat;
 	background-size:contain;
 	background-position:center;
-	width:300px;
-	height:100px;
+	width:200px;
+	height:50px;
 	margin:20px auto;
 }
 
@@ -75,7 +75,7 @@ input {
 	background-color: #eee;
 	color: #777;
 	padding: 4px 10px;
-	width: 344px;
+	width: 266px;
 }
 
 #login fieldset input[type="submit"] {
