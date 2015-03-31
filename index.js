@@ -1,5 +1,12 @@
+//Express
 var express = require('express');
 var app = express();
+
+//Socket.IO
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
+server.listen(80);
 
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
