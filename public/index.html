@@ -22,7 +22,7 @@
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
       var username = "";
-      var socket = io.connect('http://localhost/client');
+      var socket = io.connect('//localhost/client');
       $('form').submit(function(){
         socket.emit('chat', {
           name: username,
