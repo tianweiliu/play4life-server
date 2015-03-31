@@ -1,0 +1,146 @@
+@charset "utf-8";
+/* CSS Document */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+	background-color: #C0C0C0;
+	color: #000;
+	font-family: 'Comfortaa', cursive, Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	line-height: 1.5em;
+}
+input {
+	border: none;
+	font-family: inherit;
+	font-size: inherit;
+	font-weight: inherit;
+	line-height: inherit;
+	-webkit-appearance: none;
+}
+
+/* ---------- LOGIN ---------- */
+
+#loginPanel {
+	margin: 50px auto;
+	width: 400px;
+}
+
+#loginPanel h2 {
+	background-color: #ebb54b;
+	-webkit-border-radius: 20px 20px 0 0;
+	-moz-border-radius: 20px 20px 0 0;
+	border-radius: 20px 20px 0 0;
+	color: #fff;
+	font-size: 28px;
+	padding: 20px 26px;
+}
+
+#loginPanel h2 span[class*="fontawesome-"] {
+	margin-right: 14px;
+}
+
+#loginPanel #logo {
+	background:url(../images/logo.png) no-repeat;
+	background-size:contain;
+	background-position:center;
+	width:300px;
+	height:100px;
+	margin:20px auto;
+}
+
+#login fieldset {
+	background-color: #fff;
+	-webkit-border-radius: 0 0 20px 20px;
+	-moz-border-radius: 0 0 20px 20px;
+	border-radius: 0 0 20px 20px;
+	padding: 20px 26px;
+	border: 0;
+}
+
+#login fieldset p {
+	color: #777;
+	margin-bottom: 14px;
+}
+
+#login fieldset p:last-child {
+	margin-bottom: 0;
+}
+
+#login fieldset input {
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+#login fieldset input[type="email"], #login fieldset input[type="text"] {
+	background-color: #eee;
+	color: #777;
+	padding: 4px 10px;
+	width: 344px;
+}
+
+#login fieldset input[type="submit"] {
+	background-color: #33cc77;
+	color: #fff;
+	display: block;
+	margin: 0 auto;
+	padding: 4px 0;
+	width: 100px;
+}
+
+#login fieldset .disabled {
+	background-color: #ccc !important;
+}
+
+#login fieldset input[type="submit"]:hover {
+	background-color: #28ad63;
+}
+
+#login #anonymous {
+	font-size:12px;
+	text-align:right;
+}
+
+#login #anonymous a {
+	color:#777;
+}
+
+/* ---------- CHAT ---------- */
+#chatPanel {
+	display:none;
+}
+
+#chat { 
+	padding: 3px;
+	position: fixed;
+	bottom: 0;
+	width: 100%; 
+}
+#chat input {
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+#chat input[type="text"] {
+	float:left;
+	color:#777;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	padding: 10px;
+	width: 83%;
+	margin: .5%;
+}
+#chat input[type="submit"] {
+	float:left;
+	background-color: #33cc77;
+	color: #fff;
+	display: block;
+	padding: 4px 0;
+	width: 15%;
+	height: 44px;
+	margin: .5%;
+}
+#messages { list-style-type: none; margin: 0; padding: 0; }
+#messages li { padding: 5px 10px; }
+#messages li:nth-child(odd) { background: #eee; }
+.name {font-weight: bold; }
