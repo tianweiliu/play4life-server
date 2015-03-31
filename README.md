@@ -1,11 +1,13 @@
 # Play4Life Server
 
-This server is designed to to run in [Heroku]() envirnoment and used with [Play4Life](http://www.etc.cmu.edu/projects/play4life/) installation.
+This server is designed to to run on [Heroku]() envirnoment and used with [Play4Life](http://www.etc.cmu.edu/projects/play4life/) installation.
+
 This repo contains a back-end [Node.js](https://nodejs.org/) server and a HTML5 front-facing mobile client interface.
 
 ## Components ![alt tag](https://david-dm.org/tianweiliu/play4life-server.svg)
-[Express 4](http://expressjs.com/).
-[Socket.IO](http://socket.io/)
+- [Express 4](http://expressjs.com/).
+
+- [Socket.IO](http://socket.io/)
 
 ## Installation
 This application support the [Getting Started with Node on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs) article - check it out.
