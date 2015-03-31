@@ -1,7 +1,13 @@
-# node-js-getting-started
+# Play4Life Server
 
-A barebones Node.js app using [Express 4](http://expressjs.com/).
+This server is designed to to run in [Heroku]() envirnoment and used with [Play4Life](http://www.etc.cmu.edu/projects/play4life/) installation.
+This repo contains a back-end [Node.js](https://nodejs.org/) server and a HTML5 front-facing mobile client interface.
 
+## Components ![alt tag](https://david-dm.org/tianweiliu/play4life-server.svg)
+[Express 4](http://expressjs.com/).
+[Socket.IO](http://socket.io/)
+
+## Installation
 This application support the [Getting Started with Node on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs) article - check it out.
 
 ## Running Locally
@@ -9,8 +15,8 @@ This application support the [Getting Started with Node on Heroku](https://devce
 Make sure you have [Node.js](http://nodejs.org/) and the [Heroku Toolbelt](https://toolbelt.heroku.com/) installed.
 
 ```sh
-$ git clone git@github.com:heroku/node-js-getting-started.git # or clone your own fork
-$ cd node-js-getting-started
+$ git clone https://github.com/tianweiliu/play4life-server.git # or clone your own fork
+$ cd play4life-server.git
 $ npm install
 $ npm start
 ```
