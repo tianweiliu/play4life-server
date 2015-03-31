@@ -19,19 +19,28 @@
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
+      var username = "";
       var socket = io.connect('http://localhost/client');
       $('form').submit(function(){
         socket.emit('chat', {
-          name: 'dave',
+          name: username,
           message: $('#m').val()
         });
         $('#m').val('');
         return false;
       });
       socket.on('chat', function(data){
-        $('#messages').append($('<li>').text(data.message));
+        if (data.name == null) {
+          $('#messages').append($('<li>').html('<strong>' + data.message + '</strong>'));
+        }
+        else {
+            var nickname = "Anonymous";
+            if (data.name != "")
+              nickname = data.name;
+            $('#messages').append($('<li>').html('<span class="name">' + nickname + '</span>:&nbsp;' + data.message));
+        }
       });
     </script>
   </body>
