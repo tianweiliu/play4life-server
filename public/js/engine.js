@@ -149,13 +149,13 @@ $(document).ready(function() {
 		if (!loggedIn)
 			return;
 		if (data.name == null) {
-		  $('#messages').append($('<li>').html('<strong>' + data.message + '</strong>'));
+		  $('#messages').append($('<li>').append($('<strong></strong>').text(data.message)));
 		}
 		else {
 			var nickname = "Anonymous";
 			if (data.name != "")
 			  nickname = data.name;
-			$('#messages').append($('<li>').html('<span class="name">' + nickname + '</span>:&nbsp;' + data.message));
+			$('#messages').append($('<li>').append($('<span class="name"></span>').text(nickname + ": ")).append($('<span></span>').text(data.message)));
 		}
 	}); 
 	
