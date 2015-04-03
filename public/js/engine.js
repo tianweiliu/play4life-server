@@ -35,7 +35,6 @@ $(document).ready(function() {
 				if (posX >= 0 && posX <= $("#stage").width() && posY >= 0 && posY <= $("#stage").height())
 				{
 					spawnBlob($(this).parent("li").attr("id"), posX, posY);
-					console.log(posX + ", " + posY);
 				}
 				
 				$(this).css({
