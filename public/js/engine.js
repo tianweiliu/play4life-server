@@ -22,6 +22,27 @@ $(document).ready(function() {
 		$("#controlPanel #blobs").append($("<li></li>").attr("id", blobType).addClass("blobBtn").append($("<div></div").css({
 			"background": "url('images/blobs/" + blobType + ".png') no-repeat",
 			"background-size": "contain"
+		}).draggable({
+			start: function(event, ui) {
+				
+			},
+			stop: function(event, ui) {
+				var rect = $("#stage").get(0).getBoundingClientRect();
+				
+				var posX = ui.position.left + $(this).width() / 2 + $(this).parent("li").position().left - rect.left;
+				var posY = ui.position.top + $(this).height() / 2 + $(this).parent("li").position().top - rect.top;
+				
+				if (posX >= 0 && posX <= $("#stage").width() && posY >= 0 && posY <= $("#stage").height())
+				{
+					spawnBlob($(this).parent("li").attr("id"), posX, posY);
+					console.log(posX + ", " + posY);
+				}
+				
+				$(this).css({
+					left: "",
+					top: ""
+				});
+			}
 		})));
 	});
 	
@@ -103,6 +124,18 @@ $(document).ready(function() {
 			var yPos = canvas.height * (.5 - blob.y / stageH * .5);
 			context.beginPath();
 			context.arc(xPos, yPos, radius, 0, 2 * Math.PI, false);
+			context.fillStyle = rgbToHex(Math.floor(blob.color.r * 255), Math.floor(blob.color.g * 255), Math.floor(blob.color.b * 255));
+			context.fill();
+			context.lineWidth = 5;
+			context.strokeStyle = '#fff';
+			context.stroke();
+			context.closePath();
+		});
+		$.each(data.smallBlobs, function(index, blob) {
+			var xPos = canvas.width * (.5 + blob.x / stageW * .5);
+			var yPos = canvas.height * (.5 - blob.y / stageH * .5);
+			context.beginPath();
+			context.arc(xPos, yPos, radius / 2, 0, 2 * Math.PI, false);
 			context.fillStyle = rgbToHex(Math.floor(blob.color.r * 255), Math.floor(blob.color.g * 255), Math.floor(blob.color.b * 255));
 			context.fill();
 			context.lineWidth = 5;
