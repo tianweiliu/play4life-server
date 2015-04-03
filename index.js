@@ -1,3 +1,6 @@
+//Settings
+const DEBUG = true;
+
 //Express
 var express = require('express');
 var app = express();
@@ -6,8 +9,6 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-//Unity namespace
-var unity = io.of('/unity');
 //Unity socket
 var unitySocket;
 
@@ -26,18 +27,19 @@ server.listen(app.get('port'), function() {
 
 /* Unity communication */
 
-unity.on('connection', function(socket) {
+io.on('connection', function(socket) {
 	//Unity connected
 	socket.on('unityConnected', function() {
 		unitySocket = socket;
-		unity.emit('unityConnected');
+		ServerLog("Unity connected");
 	});
 
 	//Unity disconnected
 	socket.on('disconnect', function() {
 		if (socket == unitySocket) {
 			unitySocket = null;
-			unity.emit('unityDisconnected');
+			client.emit('unityDisconnected');
+			ServerLog("Unity disconnected");
 		}
 	});
 
@@ -75,7 +77,7 @@ client.on('connection', function(socket) {
 			delete users[socket];
 		}
 		else
-			console.error('Error: disconnected user is not in the user list.')
+			ServerLog('Error: disconnected user is not in the user list.')
 	});
 	//Chat message
 	socket.on('chat', function(data) {
@@ -84,6 +86,20 @@ client.on('connection', function(socket) {
 
 	//Add blob
 	socket.on('addBlob', function(data) {
-		unity.emit("addBlob", data);
+		io.emit("addBlob", data);
 	});
 });
+
+/* Functions */
+
+function ServerLog(message) {
+	var d = new Date();
+	var n = d.toTimeString();
+	console.log(message + " on " + n);
+	if(DEBUG) {
+		client.emit('chat', {
+			name: null,
+			message: message + " on " + n
+		});
+	}
+}

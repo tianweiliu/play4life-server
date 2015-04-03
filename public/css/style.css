@@ -104,6 +104,69 @@ input {
 	color:#777;
 }
 
+/* ---------- CANVAS ---------- */
+
+#stagePanel {
+	display:none;
+	padding:10px;
+}
+#stage {
+	display:none;
+	float:left;
+}
+#offline {
+	float:left;
+}
+
+/* ---------- MENU ---------- */
+
+#controlPanel {
+	float:left;
+}
+
+#controlPanel ul {
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+
+#controlPanel li {
+	margin:0;
+	padding:0;
+}
+
+#blobs {
+	display:none;
+}
+
+#blobs li {
+	margin:2px;
+	padding:5px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background-color:#eee;
+	cursor:pointer;
+}
+
+#blobs li:hover {
+	background-color:#fff;
+}
+
+#blobs li div {
+	background-position:center;
+	width:100%;
+	height:100%;
+}
+
+#draggable {
+	background-position:center;
+	position:absolute;
+	display:none;
+	width:80px;
+	height:80px;
+}
+
 /* ---------- CHAT ---------- */
 #chatPanel {
 	display:none;
@@ -140,7 +203,12 @@ input {
 	height: 44px;
 	margin: .5%;
 }
-#messages { list-style-type: none; margin: 0; padding: 0; }
+#messagePanel {
+	overflow:scroll;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+#messages { list-style: none; margin: 0; padding: 0; }
 #messages li { padding: 5px 10px; }
 #messages li:nth-child(odd) { background: #eee; }
 .name {font-weight: bold; }

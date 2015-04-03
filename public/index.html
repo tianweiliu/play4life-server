@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.2.js"></script>
     <script src="js/engine.js"></script>
   </head>
   <body>
@@ -26,13 +26,24 @@
                 </fieldset>
 			</form>
         </div>
+        <div id="stagePanel">
+	        <img src="images/pattern_01.jpg" id="canvasImg" alt="Play4Life" style="display:none" />
+            <div id="offline">This installation is currently offline.</div>
+        	<canvas id="stage" width="1024" height="1024"></canvas>
+            <div id="controlPanel">
+            	<ul id="blobs"></ul>
+                <div id="messagePanel">
+                	<ul id="messages"></ul>
+                </div>
+            </div>
+        </div>
         <div id="chatPanel">
-            <ul id="messages"></ul>
             <form action="" id="chat">
               <input type="text" id="m" autocomplete="off" value="chat" onBlur="if(this.value=='')this.value='chat'" onFocus="if(this.value=='chat')this.value=''" />
               <input type="submit" value="send" />
             </form>
         </div>
     </div>
+    <div id="draggable"></div>
   </body>
 </html>
