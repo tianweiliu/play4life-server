@@ -5,9 +5,11 @@ const BLOB_TYPE = {
 	BLUE: "HandsomeGuy",
 	YELLOW: "Bob",
 	GREEN: "Green",
-	PURPLE: "Purple",
+	PURPLE: "Purple"
+	/*
 	ORANGE: "Orange",
 	BLACK: "Black"
+	*/
 }
 
 var username = "";
@@ -181,6 +183,8 @@ function onResize() {
 		$("#offline").width(stageSize).height(stageSize);
 		$("#controlPanel").width($(window).width() - 30 - stageSize).height(stageSize).css("margin-left", "10px").css("margin-top", "");
 		var btnSize = $("#controlPanel").height() / blobTypeCount - 12;
+		if ($(window).width() - 40 - stageSize < btnSize)
+			btnSize = $(window).width() - 40 - stageSize;
 		$("#controlPanel #blobs li").height(btnSize).width(btnSize).css("float", "");
 		$("#controlPanel #blobs").width(btnSize).css("float", "left");
 		$("#messagePanel").height($("#controlPanel").height()).width($("#controlPanel").width() - 20 - btnSize).css({
@@ -196,6 +200,8 @@ function onResize() {
 		$("#offline").width(stageSize).height(stageSize);
 		$("#controlPanel").width($(window).width() - 20).height($(window).height() - 84 - stageSize).css("margin-left", "").css("margin-top", "10px");
 		var btnSize = $("#controlPanel").width() / blobTypeCount - 14;
+		if ($(window).height() - 40 - stageSize < btnSize)
+			btnSize = $(window).height() - 74 - stageSize;
 		$("#controlPanel #blobs li").height(btnSize).width(btnSize).css("float", "left");
 		$("#controlPanel #blobs").width($("#controlPanel").width()).css("float", "");
 		$("#messagePanel").height($("#controlPanel").height() - 20 - btnSize).width($("#controlPanel").width()).css({

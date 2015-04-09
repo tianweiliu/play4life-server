@@ -9,7 +9,7 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-//Unity socket
+//Unity socket id
 var unitySocket;
 
 //Client namespace
@@ -30,13 +30,13 @@ server.listen(app.get('port'), function() {
 io.on('connection', function(socket) {
 	//Unity connected
 	socket.on('unityConnected', function() {
-		unitySocket = socket;
+		unitySocket = socket.id;
 		ServerLog("Unity connected");
 	});
 
 	//Unity disconnected
 	socket.on('disconnect', function() {
-		if (socket == unitySocket) {
+		if (socket.id == unitySocket) {
 			unitySocket = null;
 			client.emit('unityDisconnected');
 			ServerLog("Unity disconnected");
@@ -45,7 +45,8 @@ io.on('connection', function(socket) {
 
 	//Unity update
 	socket.on('unityUpdate', function(data) {
-		client.emit('unityUpdate', data);
+		for (var id in client.connected)
+			client.connected[id].volatile.emit('unityUpdate', data);
 	});
 
 
@@ -56,25 +57,35 @@ io.on('connection', function(socket) {
 client.on('connection', function(socket) {
 	//User logs in
 	socket.on('login', function(data) {
-		users[socket] = {
+		users[socket.id] = {
 			'name': data.name,
 			'email': data.email
 		};
+		if (users[socket.id].name != '')
+			socket.broadcast.emit('chat', {
+				'name': null,
+				'message': users[socket.id].name + ' entered the room.'
+			});
+		else
+			socket.broadcast.emit('chat', {
+				'name': null,
+				'message': 'Anonymous entered the room.'
+			});
 	});
 	//User logs out / disconnects
 	socket.on('disconnect', function() {
-		if (socket in users) {
-			if (users[socket].name != '')
+		if (socket.id in users) {
+			if (users[socket.id].name != '')
 				client.emit('chat', {
 					'name': null,
-					'message': users[socket].name + ' has left.'
+					'message': users[socket.id].name + ' has left.'
 				});
 			else
 				client.emit('chat', {
 					'name': null,
 					'message': 'Anonymous user has left.'
 				});
-			delete users[socket];
+			delete users[socket.id];
 		}
 		else
 			ServerLog('Error: disconnected user is not in the user list.')
