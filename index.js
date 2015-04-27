@@ -9,6 +9,9 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
+//edit-google-spreadsheet
+var Spreadsheet = require('edit-google-spreadsheet');
+
 //Unity socket id
 var unitySocket;
 
