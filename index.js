@@ -42,6 +42,7 @@ io.on('connection', function(socket) {
 	//Unity connected
 	socket.on('unityConnected', function() {
 		unitySocket = socket.id;
+		sessionId++;
 		ServerLog("Unity connected");
 	});
 
@@ -275,11 +276,10 @@ function UpdateAnalytics(data) {
 				}
 				if (!dateFound) {
 					//First log of today
-					sessionId = 0;
+					sessionId = 1;
 				}
 				if (!sessionFound) {
 					//First log of this session
-					sessionId++;
 					AddData(dataSheet, rowCount + 1, {
 						1: moment().tz("America/New_York").format("l"),
 						2: sessionId,
