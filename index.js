@@ -264,6 +264,7 @@ function UpdateAnalytics(data, id) {
 							//Session found
 							sessionFound = true;
 							AddData(dataSheet, rowCount, {
+								2: id,
 								4: data.pops,
 								5: data.distance,
 								6: data.time,
