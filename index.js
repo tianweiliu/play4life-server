@@ -261,7 +261,8 @@ function UpdateAnalytics(data) {
 						todayFound = true;
 						AddData(dataSheet, rowCount, {
 							2: data.pops,
-							3: data.distance
+							3: data.distance,
+							4: moment().startOf('day').seconds(data.time).format('H:mm:ss')
 						});
 					}
 				}
@@ -270,7 +271,8 @@ function UpdateAnalytics(data) {
 					AddData(dataSheet, rowCount + 1, {
 						1: moment().tz("America/New_York").format("l"),
 						2: data.pops,
-						3: data.distance
+						3: data.distance,
+						4: moment().startOf('day').seconds(data.time).format('H:mm:ss')
 					})
 				}
 			});
