@@ -260,7 +260,7 @@ function UpdateAnalytics(data, id) {
 					if (rows[row][1] == moment().tz("America/New_York").format("l")) {
 						//Found today
 						dateFound = true;
-						if (rows[row][2] == id) {
+						if (rows[row][2] == id || rows[row][2] == "") {
 							//Session found
 							sessionFound = true;
 							AddData(dataSheet, rowCount, {
