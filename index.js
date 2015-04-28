@@ -15,6 +15,7 @@ var emailSheet;
 var spreadSheetData = require('edit-google-spreadsheet');
 var dataSheet;
 var loginCount = 0;
+var disconnectCount = 0;
 
 //Moment Timezone
 var moment = require('moment-timezone');
