@@ -51,6 +51,7 @@ io.on('connection', function(socket) {
 			client.emit('unityDisconnected');
 			ServerLog("Unity disconnected");
 		}
+		AddUnityDisconnectCount();
 	});
 
 	//Unity update
@@ -243,6 +244,41 @@ function AddLoginCount() {
 	}
 	else {
 		LoadDataSheet(AddLoginCount);
+	}
+}
+
+function AddUnityDisconnectCount() {
+	//Increase unity disconnect count
+	if (dataSheet != null) {
+		disconnectCount++;
+		dataSheet.receive(function(err, rows, info) {
+			if(err) throw err;
+			var rowCount = 0;
+			var todayFound = false;
+			for (var row in rows) {
+				rowCount++;
+				if (rows[row][1] == moment().tz("America/New_York").format("l")) {
+					//Found today
+					todayFound = true;
+					if (parseInt(rows[row][6]) > disconnectCount)
+						disconnectCount = parseInt(rows[row][6]) + 1;
+					AddData(dataSheet, rowCount, {
+						6: disconnectCount
+					});
+				}
+			}
+			if (!todayFound) {
+				//First log of today
+				disconnectCount = 1;
+				AddData(dataSheet, rowCount + 1, {
+					1: moment().tz("America/New_York").format("l"),
+					6: disconnectCount
+				})
+			}
+		});
+	}
+	else {
+		LoadDataSheet(AddUnityDisconnectCount);
 	}
 }
 
