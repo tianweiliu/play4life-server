@@ -221,7 +221,7 @@ function AddLoginCount() {
 			var todayFound = false;
 			for (var row in rows) {
 				rowCount++;
-				if (rows[row][1] == moment().tz("America/New_York").format("l")) {
+				if (rows[row][1] == moment().tz("America/New_York").format("l") && !todayFound) {
 					//Found today
 					todayFound = true;
 					if (parseInt(rows[row][3]) > loginCount)
@@ -260,7 +260,7 @@ function UpdateAnalytics(data, id) {
 					if (rows[row][1] == moment().tz("America/New_York").format("l")) {
 						//Found today
 						dateFound = true;
-						if (rows[row][2] == id || rows[row][2] == "") {
+						if (rows[row][2] == id || rows[row][2] == "" || rows[row][2] == null) {
 							//Session found
 							sessionFound = true;
 							AddData(dataSheet, rowCount, {
