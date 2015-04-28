@@ -4,9 +4,9 @@ const BLOB_TYPE = {
 	RED: "Taylor",
 	BLUE: "HandsomeGuy",
 	YELLOW: "Bob",
-	GREEN: "Green",
 	PURPLE: "Purple"
 	/*
+	GREEN: "Green",
 	ORANGE: "Orange",
 	BLACK: "Black"
 	*/
@@ -146,6 +146,15 @@ $(document).ready(function() {
 		});
 	});
 	
+	//on analytics update
+	socket.on('analyticsUpdate', function(data){
+		if (!loggedIn)
+			return;
+		$("#data").show();
+		$("#pops span").text(data.pops);
+		$("#distance span").text(parseFloat(data.distance).toFixed(3));
+	});
+	
 	//on chat data recevied
 	socket.on('chat', function(data){
 		if (!loggedIn)
@@ -167,6 +176,7 @@ $(document).ready(function() {
 			return;
 		$("#stage").hide();
 		$("#blobs").hide();
+		$("#data").hide();
 		$("#offline").show();
 	});
 });
@@ -178,8 +188,12 @@ function onResize() {
 	});
 	if ($(window).height() <= $(window).width()) {
 		//Landscape mode
-		var stageSize = $(window).height() - 74;
+		var stageSize = $(window).height() - 35;
 		$("#stage").height(stageSize).css("width", ""); 
+		$("#data").width(stageSize).css({
+			"font-size": stageSize * .04 + "px",
+			"line-height": stageSize * .045 + "px"
+		});
 		$("#offline").width(stageSize).height(stageSize);
 		$("#controlPanel").width($(window).width() - 30 - stageSize).height(stageSize).css("margin-left", "10px").css("margin-top", "");
 		var btnSize = $("#controlPanel").height() / blobTypeCount - 12;
@@ -197,6 +211,10 @@ function onResize() {
 		//Portrait mode
 		var stageSize = $(window).width() - 20;
 		$("#stage").width(stageSize).css("height", ""); 
+		$("#data").width(stageSize).css({
+			"font-size": stageSize * .04 + "px",
+			"line-height": stageSize * .045 + "px"
+		});
 		$("#offline").width(stageSize).height(stageSize);
 		$("#controlPanel").width($(window).width() - 20).height($(window).height() - 84 - stageSize).css("margin-left", "").css("margin-top", "10px");
 		var btnSize = $("#controlPanel").width() / blobTypeCount - 14;
@@ -222,7 +240,7 @@ function doLogin(anonymous) {
 	  email: email
 	});
 	$("#loginPanel").hide();
-	$("#chatPanel").show();
+	//$("#chatPanel").show();
 	$("#stagePanel").show();
 	loggedIn = true;
 }

@@ -10,7 +10,14 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 //edit-google-spreadsheet
-var Spreadsheet = require('edit-google-spreadsheet');
+var spreadSheetEmail = require('edit-google-spreadsheet');
+var emailSheet;
+var spreadSheetData = require('edit-google-spreadsheet');
+var dataSheet;
+var loginCount = 0;
+
+//Moment Timezone
+var moment = require('moment-timezone');
 
 //Unity socket id
 var unitySocket;
@@ -51,7 +58,12 @@ io.on('connection', function(socket) {
 		for (var id in client.connected)
 			client.connected[id].volatile.emit('unityUpdate', data);
 	});
-
+	
+	socket.on('analyticsUpdate', function(data) {
+		for (var id in client.connected)
+			client.connected[id].volatile.emit('analyticsUpdate', data);
+		UpdateAnalytics(data);
+	});
 
 });
 
@@ -64,16 +76,21 @@ client.on('connection', function(socket) {
 			'name': data.name,
 			'email': data.email
 		};
-		if (users[socket.id].name != '')
+		if (users[socket.id].name != '') {
 			socket.broadcast.emit('chat', {
 				'name': null,
 				'message': users[socket.id].name + ' entered the room.'
 			});
-		else
+			UpdateEmail(data);
+		}
+		else {
 			socket.broadcast.emit('chat', {
 				'name': null,
 				'message': 'Anonymous entered the room.'
 			});
+			AddLoginCount();
+		}
+			
 	});
 	//User logs out / disconnects
 	socket.on('disconnect', function() {
@@ -104,7 +121,165 @@ client.on('connection', function(socket) {
 	});
 });
 
+/* Google Spreadsheet */
+LoadEmailSheet(LoadDataSheet);
+
 /* Functions */
+
+function AddData(sheet, rowIndex, colData, callback) {
+	var newRow = {};
+	newRow[rowIndex] = colData;
+	sheet.add(newRow);
+	sheet.send(function(err) {
+		if(err) throw err;
+	});
+	if (callback != null)
+		callback();
+}
+
+function LoadEmailSheet(callback, data) {
+	//Google spreadsheet for email recording
+	spreadSheetEmail.load({
+		debug: DEBUG,
+		spreadsheetId: '1PJ5PGnVnZSJj5IlhX7UJfvQKU9Up2v4_nlpWDwpDXGY',
+		worksheetId: 'od6', //Email sheet id
+		
+		oauth:{
+			email: process.env.DRIVE_USERNAME,
+			key: process.env.DRIVE_KEY
+		}
+	}, function sheetReady(err, spreadsheet) {
+		emailSheet = spreadsheet;
+		if (callback != null) {
+			if (data != null)
+				callback(data);
+			else
+				callback();
+		}
+	});
+}
+
+function UpdateEmail(data) {
+	//Update email collection
+	if (emailSheet != null) {
+		emailSheet.receive(function(err, rows, info) {
+			if(err) throw err;
+			var rowCount = 0;
+			var emailFound = false;
+			for (var row in rows) {
+				rowCount++;
+				if (rows[row][2] == data.email) {
+					emailFound = true;
+					AddData(emailSheet, rowCount, {
+						3: moment().tz("America/New_York").format("MMM Do YYYY, h:mm:ss a")
+					}, AddLoginCount);
+				}
+			}
+			if (!emailFound) {
+				AddData(emailSheet, rowCount + 1, {
+					1: data.name,
+					2: data.email,
+					3: moment().tz("America/New_York").format("MMM Do YYYY, h:mm:ss a")
+				}, AddLoginCount);
+			}
+		});
+	}
+	else {
+		LoadEmailSheet(UpdateEmail, data);
+	}
+}
+
+function LoadDataSheet(callback, data) {
+	//Google spreadsheet for analytics
+	spreadSheetData.load({
+		debug: DEBUG,
+		spreadsheetId: '1wKKvj0hI-CZFKasl6O-MXBvSnPE-Vyf4O-uzegld77Y',
+		worksheetId: 'od6', //Analytics sheet id
+		
+		oauth:{
+			email: process.env.DRIVE_USERNAME,
+			key: process.env.DRIVE_KEY
+		}
+	}, function sheetReady(err, spreadsheet) {
+		dataSheet = spreadsheet;
+		if (callback != null) {
+			if (data != null)
+				callback(data);
+			else
+				callback();
+		}
+	});
+}
+
+function AddLoginCount() {
+	//Increase login count
+	if (dataSheet != null) {
+		loginCount++;
+		dataSheet.receive(function(err, rows, info) {
+			if(err) throw err;
+			var rowCount = 0;
+			var todayFound = false;
+			for (var row in rows) {
+				rowCount++;
+				if (rows[row][1] == moment().tz("America/New_York").format("l")) {
+					//Found today
+					todayFound = true;
+					if (parseInt(rows[row][4]) > loginCount)
+						loginCount = parseInt(rows[row][4]) + 1;
+					AddData(dataSheet, rowCount, {
+						4: loginCount
+					});
+				}
+			}
+			if (!todayFound) {
+				//First log of today
+				loginCount = 1;
+				AddData(dataSheet, rowCount + 1, {
+					1: moment().tz("America/New_York").format("l"),
+					4: loginCount
+				})
+			}
+		});
+	}
+	else {
+		LoadDataSheet(AddLoginCount);
+	}
+}
+
+function UpdateAnalytics(data) {
+	//Store analytics data to google spreadsheet only when data.upload == true
+	if (data.upload == true) {
+		if (dataSheet != null) {
+			dataSheet.receive(function(err, rows, info) {
+				if(err) throw err;
+				var rowCount = 0;
+				var todayFound = false;
+				for (var row in rows) {
+					rowCount++;
+					if (rows[row][1] == moment().tz("America/New_York").format("l")) {
+						//Found today
+						todayFound = true;
+						AddData(dataSheet, rowCount, {
+							2: data.pops,
+							3: data.distance
+						});
+					}
+				}
+				if (!todayFound) {
+					//First log of today
+					AddData(dataSheet, rowCount + 1, {
+						1: moment().tz("America/New_York").format("l"),
+						2: data.pops,
+						3: data.distance
+					})
+				}
+			});
+		}
+		else {
+			LoadDataSheet(UpdateAnalytics, data);
+		}
+	}
+}
 
 function ServerLog(message) {
 	var d = new Date();

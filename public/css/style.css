@@ -118,6 +118,31 @@ input {
 	float:left;
 }
 
+/* ---------- DATA ---------- */
+
+#data {
+	color:#fff;
+	display:none;
+	position: fixed;
+	top:10px;
+	left:10px;
+}
+
+#pops {
+	float: left;
+	padding:10px;
+}
+
+#distance {
+	float: right;
+	padding:10px;
+	text-align:right;
+}
+
+#data span {
+	font-weight:bold;
+}
+
 /* ---------- MENU ---------- */
 
 #controlPanel {
