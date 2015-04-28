@@ -13,9 +13,9 @@ var io = require('socket.io')(server);
 var spreadSheetEmail = require('edit-google-spreadsheet');
 var emailSheet;
 var spreadSheetData = require('edit-google-spreadsheet');
+var sessionId = 0;
 var dataSheet;
 var loginCount = 0;
-var disconnectCount = 0;
 
 //Moment Timezone
 var moment = require('moment-timezone');
@@ -52,7 +52,6 @@ io.on('connection', function(socket) {
 			client.emit('unityDisconnected');
 			ServerLog("Unity disconnected");
 		}
-		AddUnityDisconnectCount();
 	});
 
 	//Unity update
@@ -226,10 +225,10 @@ function AddLoginCount() {
 				if (rows[row][1] == moment().tz("America/New_York").format("l")) {
 					//Found today
 					todayFound = true;
-					if (parseInt(rows[row][4]) > loginCount)
-						loginCount = parseInt(rows[row][4]) + 1;
+					if (parseInt(rows[row][3]) > loginCount)
+						loginCount = parseInt(rows[row][3]) + 1;
 					AddData(dataSheet, rowCount, {
-						4: loginCount
+						3: loginCount
 					});
 				}
 			}
@@ -238,48 +237,13 @@ function AddLoginCount() {
 				loginCount = 1;
 				AddData(dataSheet, rowCount + 1, {
 					1: moment().tz("America/New_York").format("l"),
-					4: loginCount
+					3: loginCount
 				})
 			}
 		});
 	}
 	else {
 		LoadDataSheet(AddLoginCount);
-	}
-}
-
-function AddUnityDisconnectCount() {
-	//Increase unity disconnect count
-	if (dataSheet != null) {
-		disconnectCount++;
-		dataSheet.receive(function(err, rows, info) {
-			if(err) throw err;
-			var rowCount = 0;
-			var todayFound = false;
-			for (var row in rows) {
-				rowCount++;
-				if (rows[row][1] == moment().tz("America/New_York").format("l")) {
-					//Found today
-					todayFound = true;
-					if (parseInt(rows[row][6]) > disconnectCount)
-						disconnectCount = parseInt(rows[row][6]) + 1;
-					AddData(dataSheet, rowCount, {
-						6: disconnectCount
-					});
-				}
-			}
-			if (!todayFound) {
-				//First log of today
-				disconnectCount = 1;
-				AddData(dataSheet, rowCount + 1, {
-					1: moment().tz("America/New_York").format("l"),
-					6: disconnectCount
-				})
-			}
-		});
-	}
-	else {
-		LoadDataSheet(AddUnityDisconnectCount);
 	}
 }
 
@@ -290,26 +254,40 @@ function UpdateAnalytics(data) {
 			dataSheet.receive(function(err, rows, info) {
 				if(err) throw err;
 				var rowCount = 0;
-				var todayFound = false;
+				var sessionFound = false;
+				var dateFound = false;
 				for (var row in rows) {
 					rowCount++;
 					if (rows[row][1] == moment().tz("America/New_York").format("l")) {
 						//Found today
-						todayFound = true;
-						AddData(dataSheet, rowCount, {
-							2: data.pops,
-							3: data.distance,
-							5: moment().startOf('day').seconds(data.time).format('H:mm:ss')
-						});
+						dateFound = true;
+						if (rows[row][2] == sessionId) {
+							//Session found
+							sessionFound = true;
+							AddData(dataSheet, rowCount, {
+								4: data.pops,
+								5: data.distance,
+								6: data.time,
+								7: moment().startOf('day').seconds(data.time).format('H:mm:ss')
+							});
+						}
 					}
 				}
-				if (!todayFound) {
+				if (!dateFound) {
 					//First log of today
+					sessionId = 0;
+				}
+				if (!sessionFound) {
+					//First log of this session
+					sessionId++;
 					AddData(dataSheet, rowCount + 1, {
 						1: moment().tz("America/New_York").format("l"),
-						2: data.pops,
-						3: data.distance,
-						5: moment().startOf('day').seconds(data.time).format('H:mm:ss')
+						2: sessionId,
+						//3 is for login count
+						4: data.pops,
+						5: data.distance,
+						6: data.time,
+						7: moment().startOf('day').seconds(data.time).format('H:mm:ss')
 					})
 				}
 			});
