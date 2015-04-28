@@ -224,10 +224,10 @@ function AddLoginCount() {
 				if (rows[row][1] == moment().tz("America/New_York").format("l") && !todayFound) {
 					//Found today
 					todayFound = true;
-					if (parseInt(rows[row][3]) > loginCount)
-						loginCount = parseInt(rows[row][3]) + 1;
+					if (parseInt(rows[row][2]) > loginCount)
+						loginCount = parseInt(rows[row][2]) + 1;
 					AddData(dataSheet, rowCount, {
-						3: loginCount
+						2: loginCount
 					});
 				}
 			}
@@ -236,7 +236,7 @@ function AddLoginCount() {
 				loginCount = 1;
 				AddData(dataSheet, rowCount + 1, {
 					1: moment().tz("America/New_York").format("l"),
-					3: loginCount
+					2: loginCount
 				})
 			}
 		});
@@ -260,15 +260,15 @@ function UpdateAnalytics(data, id) {
 					if (rows[row][1] == moment().tz("America/New_York").format("l")) {
 						//Found today
 						dateFound = true;
-						if (rows[row][2] == id || rows[row][2] == "" || rows[row][2] == null) {
+						if (rows[row][7] == id || rows[row][7] == "" || rows[row][7] == null) {
 							//Session found
 							sessionFound = true;
 							AddData(dataSheet, rowCount, {
-								2: id,
-								4: data.pops,
-								5: data.distance,
-								6: data.time,
-								7: moment().startOf('day').seconds(data.time).format('H:mm:ss')
+								3: data.pops,
+								4: data.distance,
+								5: data.time,
+								6: moment().startOf('day').seconds(data.time).format('H:mm:ss'),
+								7: id
 							});
 						}
 					}
@@ -277,12 +277,12 @@ function UpdateAnalytics(data, id) {
 					//First log of this session
 					AddData(dataSheet, rowCount + 1, {
 						1: moment().tz("America/New_York").format("l"),
-						2: id,
-						//3 is for login count
-						4: data.pops,
-						5: data.distance,
-						6: data.time,
-						7: moment().startOf('day').seconds(data.time).format('H:mm:ss')
+						//2 is for login count
+						3: data.pops,
+						4: data.distance,
+						5: data.time,
+						6: moment().startOf('day').seconds(data.time).format('H:mm:ss'),
+						7: id
 					})
 				}
 			});
