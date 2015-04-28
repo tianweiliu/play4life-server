@@ -13,7 +13,6 @@ var io = require('socket.io')(server);
 var spreadSheetEmail = require('edit-google-spreadsheet');
 var emailSheet;
 var spreadSheetData = require('edit-google-spreadsheet');
-var sessionId = 0;
 var dataSheet;
 var loginCount = 0;
 
@@ -42,7 +41,6 @@ io.on('connection', function(socket) {
 	//Unity connected
 	socket.on('unityConnected', function() {
 		unitySocket = socket.id;
-		sessionId++;
 		ServerLog("Unity connected");
 	});
 
@@ -64,7 +62,7 @@ io.on('connection', function(socket) {
 	socket.on('analyticsUpdate', function(data) {
 		for (var id in client.connected)
 			client.connected[id].volatile.emit('analyticsUpdate', data);
-		UpdateAnalytics(data);
+		UpdateAnalytics(data, socket.id);
 	});
 
 });
@@ -248,7 +246,7 @@ function AddLoginCount() {
 	}
 }
 
-function UpdateAnalytics(data) {
+function UpdateAnalytics(data, id) {
 	//Store analytics data to google spreadsheet only when data.upload == true
 	if (data.upload == true) {
 		if (dataSheet != null) {
@@ -262,7 +260,7 @@ function UpdateAnalytics(data) {
 					if (rows[row][1] == moment().tz("America/New_York").format("l")) {
 						//Found today
 						dateFound = true;
-						if (rows[row][2] == sessionId) {
+						if (rows[row][2] == id) {
 							//Session found
 							sessionFound = true;
 							AddData(dataSheet, rowCount, {
@@ -274,15 +272,11 @@ function UpdateAnalytics(data) {
 						}
 					}
 				}
-				if (!dateFound) {
-					//First log of today
-					sessionId = 1;
-				}
 				if (!sessionFound) {
 					//First log of this session
 					AddData(dataSheet, rowCount + 1, {
 						1: moment().tz("America/New_York").format("l"),
-						2: sessionId,
+						2: id,
 						//3 is for login count
 						4: data.pops,
 						5: data.distance,
