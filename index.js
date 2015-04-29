@@ -16,6 +16,26 @@ var spreadSheetData = require('edit-google-spreadsheet');
 var dataSheet;
 var loginCount = 0;
 
+//Email spreadsheet structure
+const EMAIL_COL = {
+	NAME: 1,
+	EMAIL: 2,
+	TIME: 3
+}
+
+//Data spreadsheet structure
+const DATA_COL = {
+	DATE: 1,
+	TIME: 2,
+	ID: 3,
+	LOGIN: 4,
+	POPS: 5,
+	DISTANCE: 6,
+	RUNTIME_RAW: 7,
+	RUNTIME: 8
+}
+
+
 //Moment Timezone
 var moment = require('moment-timezone');
 
@@ -130,7 +150,9 @@ function AddData(sheet, rowIndex, colData, callback) {
 	var newRow = {};
 	newRow[rowIndex] = colData;
 	sheet.add(newRow);
-	sheet.send(function(err) {
+	if (DEBUG)
+		console.log(newRow);
+	sheet.send({ autoSize: true }, function(err) {
 		if(err) throw err;
 	});
 	if (callback != null)
@@ -168,19 +190,19 @@ function UpdateEmail(data) {
 			var emailFound = false;
 			for (var row in rows) {
 				rowCount++;
-				if (rows[row][2] == data.email) {
+				if (rows[row][EMAIL_COL.EMAIL] == data.email) {
 					emailFound = true;
-					AddData(emailSheet, rowCount, {
-						3: moment().tz("America/New_York").format("MMM Do YYYY, h:mm:ss a")
-					}, AddLoginCount);
+					var newData = {};
+					newData[EMAIL_COL.TIME] = moment().tz("America/New_York").format("MMM Do YYYY, h:mm:ss a");
+					AddData(emailSheet, rowCount, newData, AddLoginCount);
 				}
 			}
 			if (!emailFound) {
-				AddData(emailSheet, rowCount + 1, {
-					1: data.name,
-					2: data.email,
-					3: moment().tz("America/New_York").format("MMM Do YYYY, h:mm:ss a")
-				}, AddLoginCount);
+				var newData = {};
+				newData[EMAIL_COL.NAME] = data.name;
+				newData[EMAIL_COL.EMAIL] = data.email;
+				newData[EMAIL_COL.TIME] = moment().tz("America/New_York").format("MMM Do YYYY, h:mm:ss a");
+				AddData(emailSheet, rowCount + 1, newData, AddLoginCount);
 			}
 		});
 	}
@@ -221,23 +243,23 @@ function AddLoginCount() {
 			var todayFound = false;
 			for (var row in rows) {
 				rowCount++;
-				if (rows[row][1] == moment().tz("America/New_York").format("l") && !todayFound) {
+				if (rows[row][DATA_COL.DATE] == moment().tz("America/New_York").format("l") && !todayFound) {
 					//Found today
 					todayFound = true;
-					if (parseInt(rows[row][2]) > loginCount)
-						loginCount = parseInt(rows[row][2]) + 1;
-					AddData(dataSheet, rowCount, {
-						2: loginCount
-					});
+					if (parseInt(rows[row][DATA_COL.LOGIN]) > loginCount)
+						loginCount = parseInt(rows[row][DATA_COL.LOGIN]) + 1;
+					var newData = {};
+					newData[DATA_COL.LOGIN] = loginCount;
+					AddData(dataSheet, rowCount, newData);
 				}
 			}
 			if (!todayFound) {
 				//First log of today
 				loginCount = 1;
-				AddData(dataSheet, rowCount + 1, {
-					1: moment().tz("America/New_York").format("l"),
-					2: loginCount
-				})
+				var newData = {};
+				newData[DATA_COL.DATE] = moment().tz("America/New_York").format("l");
+				newData[DATA_COL.LOGIN] = loginCount;
+				AddData(dataSheet, rowCount + 1, newData)
 			}
 		});
 	}
@@ -257,33 +279,33 @@ function UpdateAnalytics(data, id) {
 				var dateFound = false;
 				for (var row in rows) {
 					rowCount++;
-					if (rows[row][1] == moment().tz("America/New_York").format("l")) {
+					if (rows[row][DATA_COL.DATE] == moment().tz("America/New_York").format("l")) {
 						//Found today
 						dateFound = true;
-						if (rows[row][7] == id || rows[row][7] == "" || rows[row][7] == null) {
+						if (rows[row][DATA_COL.ID] == id || rows[row][DATA_COL.ID] == "" || rows[row][DATA_COL.ID] == null) {
 							//Session found
 							sessionFound = true;
-							AddData(dataSheet, rowCount, {
-								3: data.pops,
-								4: data.distance,
-								5: data.time,
-								6: moment().startOf('day').seconds(data.time).format('H:mm:ss'),
-								7: id
-							});
+							var newData = {};
+							newData[DATA_COL.ID] = id;
+							newData[DATA_COL.POPS] = data.pops;
+							newData[DATA_COL.DISTANCE] = data.distance;
+							newData[DATA_COL.RUNTIME_RAW] = data.time;
+							newData[DATA_COL.RUNTIME] = moment().startOf('day').seconds(data.time).format('H:mm:ss');
+							AddData(dataSheet, rowCount, newData);
 						}
 					}
 				}
 				if (!sessionFound) {
 					//First log of this session
-					AddData(dataSheet, rowCount + 1, {
-						1: moment().tz("America/New_York").format("l"),
-						//2 is for login count
-						3: data.pops,
-						4: data.distance,
-						5: data.time,
-						6: moment().startOf('day').seconds(data.time).format('H:mm:ss'),
-						7: id
-					})
+					var newData = {};
+					newData[DATA_COL.DATE] = moment().tz("America/New_York").format("l");
+					newData[DATA_COL.TIME] = moment().tz("America/New_York").format("LTS");
+					newData[DATA_COL.ID] = id;
+					newData[DATA_COL.POPS] = data.pops;
+					newData[DATA_COL.DISTANCE] = data.distance;
+					newData[DATA_COL.RUNTIME_RAW] = data.time;
+					newData[DATA_COL.RUNTIME] = moment().startOf('day').seconds(data.time).format('H:mm:ss');
+					AddData(dataSheet, rowCount + 1, newData);
 				}
 			});
 		}
