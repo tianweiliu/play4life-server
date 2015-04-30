@@ -286,6 +286,8 @@ function UpdateAnalytics(data, id) {
 							//Session found
 							sessionFound = true;
 							var newData = {};
+							if (rows[row][DATA_COL.TIME] == "" || rows[row][DATA_COL.TIME] == null)
+								newData[DATA_COL.TIME] = moment().tz("America/New_York").format("l");
 							newData[DATA_COL.ID] = id;
 							newData[DATA_COL.POPS] = data.pops;
 							newData[DATA_COL.DISTANCE] = data.distance;
