@@ -1,5 +1,5 @@
 //Settings
-const DEBUG = true;
+const DEBUG = false;
 
 //Express
 var express = require('express');
